@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>三目並べ</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+    td {
+      width: 60px;
+      height: 60px;
+      border: 1px solid #000;
+      font-size: 40px;
+      text-align: center;
+      vertical-align: middle;
+      cursor: pointer;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>三目並べ</h1>
+  <table id="board">
+    <tr>
+      <td data-index="0"></td>
+      <td data-index="1"></td>
+      <td data-index="2"></td>
+    </tr>
+    <tr>
+      <td data-index="3"></td>
+      <td data-index="4"></td>
+      <td data-index="5"></td>
+    </tr>
+    <tr>
+      <td data-index="6"></td>
+      <td data-index="7"></td>
+      <td data-index="8"></td>
+    </tr>
+  </table>
+  <div id="message"></div>
+  <button onclick="resetGame()">リセット</button>
+
+  <script>
+    const cells = document.querySelectorAll("td");
+    const message = document.getElementById("message");
+    let board = Array(9).fill("");
+    let currentPlayer = "○";
+    let gameActive = true;
+
+    cells.forEach(cell => {
+      cell.addEventListener("click", () => {
+        const index = cell.getAttribute("data-index");
+        if (!gameActive || board[index]) return;
+        board[index] = currentPlayer;
+        cell.textContent = currentPlayer;
+        if (checkWinner()) {
+          message.textContent = `${currentPlayer} の勝ち！`;
+          gameActive = false;
+        } else if (board.every(cell => cell)) {
+          message.textContent = "引き分け！";
+          gameActive = false;
+        } else {
+          currentPlayer = currentPlayer === "○" ? "×" : "○";
+        }
+      });
+    });
+
+    function checkWinner() {
+      const lines = [
+        [0,1,2], [3,4,5], [6,7,8],
+        [0,3,6], [1,4,7], [2,5,8],
+        [0,4,8], [2,4,6]
+      ];
+      return lines.some(line => 
+        line.every(index => board[index] === currentPlayer)
+      );
+    }
+
+    function resetGame() {
+      board = Array(9).fill("");
+      currentPlayer = "○";
+      gameActive = true;
+      cells.forEach(cell => cell.textContent = "");
+      message.textContent = "";
+    }
+  </script>
+</body>
+</html>
